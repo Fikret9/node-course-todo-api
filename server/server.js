@@ -56,6 +56,27 @@ app.get('/todos/:id',(req,res) => {
 	 })
 });
 
+app.delete('/todos/:id',(req,res) => {
+	var id = req.params.id;
+	if (!ObjectID.isValid(id)){
+		console.log('invalid object');
+		return res.status(404).send();
+	}
+
+	Todo.findByIdAndRemove(id).then((todo) =>{
+		console.log(id + ' ' + todo);
+		if (!todo) {
+			  return status(404).send('not found !');
+		}
+		res.send({todo});
+	}).catch((e) => {
+		console.log(e);
+		res.status(400).send();
+	});
+	// remove todo by id
+	//success (if doc or no doc) or error 400 with empty body 
+
+})
 
 
 
