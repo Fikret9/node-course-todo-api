@@ -1,15 +1,5 @@
 require('./config/config.js');
-var env = process.env.NODE_ENV || 'development';
-console.log('env *** ',env);
-if (env === 'development'){
-  process.env.PORT = 3000;
-  process.env.MONGODB_URI = 'mongodb://localhost:27017/TodoApp';
-}
 
-if (env === 'test'){
-  process.env.PORT = 3000;	
-  process.env.MONGODB_URI = 'mongodb://localhost:27017/TodoAppTest';
-}
 var express = require('express');
 var bodyParser = require('body-parser');
 const _  = require('lodash');
@@ -116,6 +106,21 @@ app.patch('/todos/:id',(req,res) => {
 		})
 			
 })
+
+app.post('/users',(req,res) => {
+	var body = _.pick(req.body,['email','password']);
+	var user = new User(body);
+	console.log('user1 '+user);
+	user.save().then(() => {
+		 return user.generateAuthToken();
+	}).then((token) => {
+		console.log('jfjfj');
+		res.header('x-auth',token).send(user);
+	}).catch((e) => {
+		console.log(e);
+		res.status(400).send(e);
+})
+});	
 
 
 app.listen(port,() => {
